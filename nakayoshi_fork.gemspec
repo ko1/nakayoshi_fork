@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["ko1@atdot.net"]
   spec.summary       = %q{nakayoshi_fork gem solves CoW friendly problem on MRI 2.2 and later.}
   spec.description   = %q{nakayoshi_fork gem solves CoW friendly problem on MRI 2.2 and later.}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/ko1/nakayoshi_fork"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
