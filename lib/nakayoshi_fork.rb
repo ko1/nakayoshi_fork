@@ -4,14 +4,20 @@ module NakayoshiFork
   def fork(nakayoshi: true, cow_friendly: true, &b)
     if nakayoshi && cow_friendly
       h = {}
-      3.times{ # maximum 3 times
+      4.times{ # maximum 4 times
         GC.stat(h)
         live_slots = h[:heap_live_slots] || h[:heap_live_slot]
         old_objects = h[:old_objects] || h[:old_object]
         remwb_unprotects = h[:remembered_wb_unprotected_objects] || h[:remembered_shady_object]
         young_objects = live_slots - old_objects - remwb_unprotects
+
+        # p [[live_slots, old_objects, remwb_unprotects], [young_objects]]
+
         break if young_objects < live_slots / 10
+
+        disabled = GC.enable
         GC.start(full_mark: false)
+        GC.disable if disabled
       }
     end
 
