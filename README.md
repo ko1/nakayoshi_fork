@@ -20,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-You only need to `require "nakayoshi-fork"`.
+You only need to `require "nakayoshi_fork"`.
 
 If you want to disable nakayoshi-fork, then use `fork(nakayoshi: false)` or `fork(cow_friendly: false)`.
 
