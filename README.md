@@ -1,6 +1,6 @@
 # NakayoshiFork
 
-nakayoshi_fork gem solves CoW friendly problem on MRI 2.2 and later.
+nakayoshi_fork gem solves CoW friendly issues on MRI 2.2 and later.
 
 ## Installation
 
@@ -20,30 +20,40 @@ Or install it yourself as:
 
 ## Usage
 
-You only need to `require "nakayoshi_fork"`.
+You only need to `require "nakayoshi_fork"` to enable the gem.
 
-If you want to disable nakayoshi-fork, then use `fork(nakayoshi: false)` or `fork(cow_friendly: false)`.
+If you want to disable `nakayoshi_fork`, use `fork(nakayoshi: false)` or `fork(cow_friendly: false)`.
 
 ## Mechanism
 
-MRI 2.1 employs generational GC algorithms that separate YOUNG objects and OLD objects.
-Young objects will be promoted to old objects when they survive 1 GC.
-After surviving 1 GC, set OLD bit for each young objects. So that we can recognize the promoted objects are old objects.
-MRI 2.1 uses bitmap for the old object bit and it is CoW friendly.
+### Ruby 2.1 GC
 
-However, Ruby 2.2 employs an algorithm to promote young objects after 3 GCs.
-To count GC surviving number, all of objects have *age* field per objects (2 bits field to count 0 to 3).
-Created objects are age 0, and age 3 objects are promoted (old) objects.
+MRI 2.1 uses a generational GC algorithm that separate *young* objects and *old* objects:
 
-Unfortunately, age fileds are embed to object header, so that when there are many young objects,
-but promoted soon is problem because their object headers are written and mark as dirty page.
+1. *Young* objects are promoted to *old* objects when they survive 1 GC cycle.
+2. After surviving 1 GC cycle, the `old` bit is set for each *young* object so we can tell that the promoted objects are now *old* objects.
+
+MRI 2.1 also uses a bitmap to store the old object bit which means it's CoW friendly.
+
+### Ruby 2.2 GC
+
+MRI Ruby 2.2 uses an algorithm to promote *young* objects after 3 GC cycles instead of 1.
+
+To count GC survivors, all objects have an *age* field (2 bits field to count fron 0 to 3).
+
+Newly created *young* objects are age 0. Promoted *old* objects are age 3.
+
+Unfortunately, the `age` fields are embedded into object headers. This means that when there 
+are many young objects premature promotion is a problem because object headers are written 
+and marked as a dirty page.
+
 This is why MRI 2.2 has CoW friendly problem on fork.
 
-nakayoshi_fork gem promotes most of young objects before fork by invoking GC some times.
+The `nakayoshi_fork` gem promotes most of young objects before fork by invoking GC some times.
 
 ### Result:
 
-The following results are tests using nakayoshi-fork on my environment (2GB 64bit CPU Ubuntu machine).
+The following results are tests using `nakayoshi_fork` on my environment (2GB 64bit CPU Ubuntu machine).
 
 Test script is here:
 
@@ -91,7 +101,7 @@ end
 puts 'after terminate all processes: ' + mem_usage.inspect
 ```
 
-Without nakayoshi-fork:
+Without `nakayoshi_fork`:
 
 ```
 ruby 2.0.0p402 (2014-02-11) [x86_64-linux]
@@ -197,7 +207,7 @@ after terminate all processes: {:total_mem=>"2001", :used_mem=>"308", :free_mem=
 
 You can see Ruby 2.2 and Ruby 2.3 consume memory after fork+GC.
 
-Using nakayoshi-fork:
+Using `nakayoshi_fork`:
 
 ```
 ruby 2.0.0p402 (2014-02-11) [x86_64-linux]
