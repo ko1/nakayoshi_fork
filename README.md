@@ -305,7 +305,7 @@ You can see the improvement after GCs on MRI 2.2 and MRI 2.3-dev.
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/nakayoshi_fork/fork )
+1. Fork it ( https://github.com/ko1/nakayoshi_fork/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
